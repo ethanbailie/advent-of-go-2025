@@ -33,10 +33,21 @@ func main() {
 		if direction == "L" {
 			shift = -1
 		}
-		num = (num + move*shift) % 100
-		if num < 0 {
+
+		prev := num
+		num = (num + move*shift)
+		if prev == 0 && num < 0 && num%100 != 0 {
+			res -= 1
+		}
+		for num < 0 {
 			num += 100
-		} else if num == 0 {
+			res += 1
+		}
+		if num == 0 {
+			res += 1
+		}
+		for num > 99 {
+			num -= 100
 			res += 1
 		}
 	}
