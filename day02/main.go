@@ -1,36 +1,55 @@
 package main
 
 import (
+	"fmt"
+	"math"
 	"os"
 	"strconv"
 	"strings"
 )
 
-func check_vals(value_range string) {
-	values := strings.Split(value_range, "-")
-	start_str := values[0]
-	end_str := values[1]
+func exp(power int) int {
+	return int(math.Pow10(power))
+}
 
-	start_mod := len(start_str)
-	end_mod := len(end_str)
+func checkVals(valueRange string) []int {
+	values := strings.Split(valueRange, "-")
+	startStr := strings.TrimSpace(values[0])
+	endStr := strings.TrimSpace(values[1])
 
-	start_val, err := strconv.Atoi(start_str)
+	startMod := len(startStr)
+
+	var res []int
+	var curr int
+
+	startVal, err := strconv.Atoi(startStr)
 	if err != nil {
 		panic(err)
 	}
-	end_val, err := strconv.Atoi(end_str)
+	endVal, err := strconv.Atoi(endStr)
 	if err != nil {
 		panic(err)
 	}
 
-	for start_mod <= end_mod {
-		if start_mod%2 != 0 {
-			start_mod += 1
-			continue
+	if startMod%2 != 0 {
+		startVal = exp(startMod)
+		startMod += 1
+	}
+
+	for startVal <= endVal {
+		curr = startVal % exp(startMod/2)
+		if curr == ((startVal - curr) / exp(startMod/2)) {
+			res = append(res, startVal)
 		}
+		startVal += 1
 
-		start_mod += 2
+		if startVal == exp(startMod) {
+			startMod += 2
+			startVal *= 10
+		}
 	}
+
+	return res
 }
 
 func main() {
@@ -39,7 +58,16 @@ func main() {
 		panic(err)
 	}
 
+	var nums []int
+	var res int
+
 	vals := strings.SplitSeq(string(data), ",")
 	for val := range vals {
+		nums = append(nums, checkVals(val)...)
 	}
+
+	for _, num := range nums {
+		res += num
+	}
+	fmt.Println(res)
 }
